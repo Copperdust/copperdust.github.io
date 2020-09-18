@@ -17,8 +17,7 @@
 
 <style>
   .hidden {
-    position: absolute;
-    opacity: 0;
+    display: none;
   }
   .top {
     display: flex;
@@ -28,28 +27,30 @@
 
 <body>
   <div class="container-fluid">
-    <h1>Pokemon Multiple Choice for Sleep</h1>
-    <section class="main">
-      <div class="top">
-        <div class="bad">0</div>
-        <div class="images"><img id="mainImage" src="https://upload.wikimedia.org/wikipedia/commons/5/55/Question_Mark.svg" alt="?"></div>
-        <div class="good">0</div>
-      </div>
-      <div class="controls">
-        <script>
-          for (let index = 0; index < possibilities; index++) {
-            document.write('<button id="b'+(index+1)+'" class="btn btn-primary">name goes here</button>');
-          }
-        </script>
-      </div>
-    </section>
+    <div class='offset-4 col-md-4'>
+      <h1>Pokemon Multiple Choice for Sleep</h1>
+      <section class="main">
+        <div class="top">
+          <div class="bad">0</div>
+          <div class="images"><img id="mainImage" src="https://upload.wikimedia.org/wikipedia/commons/5/55/Question_Mark.svg" alt="?"></div>
+          <div class="good">0</div>
+        </div>
+        <div class="controls">       
+          <script>
+            for (let index = 1; index < possibilities + 1; index++) {
+              document.write('<button id="b' + index + '" class="btn btn-primary">name goes here</button>');
+            }
+          </script>
+        </div>
+      </section>
+    </div>
   </div>
   <audio controls id="audio" class="hidden">
-    <source src="pokemon-lofi-music.mp3" type="audio/mp3">
+    <source src="./pokemon-lofi-music.mp3" type="audio/mp3">
   </audio>
   
   <script>
-
+    // Get one pokemon
     function getOnePokemon() {
       endpoint = 'pokemon/';
       random = Math.floor(Math.random() * Math.floor(100)) + 1;
@@ -57,6 +58,7 @@
         url: api + endpoint + random,
       });
     }
+    // Main function
     async function newChallenge() {
       // Get 4 new pokemon
       var pokes = [];
@@ -95,23 +97,42 @@
         }
       });
     }
-    // On click event
+    // On image finished loading
+    $('#mainImage').on('load', function() {
+      unBlockInputs();
+    });
+    // Block inputs
+    function unBlockInputs() {
+      for (let index = 1; index < possibilities + 1; index++) {
+        $('#b'+index).prop('disabled', false);
+      }
+    }
+    // Block inputs
+    function blockInputs() {
+      for (let index = 1; index < possibilities + 1; index++) {
+        $('#b'+index).prop('disabled', true);
+      }
+    }
+    // Increase the counter for good or bad
     function increaseCounter( selector ) {
       var current = parseInt($(selector).text());
       $(selector).text(++current);
     }
-    const audio = $('#audio')
+    // On click event
+    // const audio = $('#audio')
     // If good button is clicked, increase good counter
     $(document).on('click', '.correct', function (e) {
+      blockInputs();
       increaseCounter('.good');
-      audio.play()
+      // audio.play()
       // Call this function again
       newChallenge();
     });
     // If bad button is clicked, increase bad counter
     $(document).on('click', '.incorrect', function (e) {
+      blockInputs();
       increaseCounter('.bad');
-      audio.stop()
+      // audio.pause()
       // Call this function again
       newChallenge();
     });
