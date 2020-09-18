@@ -5,6 +5,14 @@
 
   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
     crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+  <script>
+    // Define constants
+    const api = 'https://pokeapi.co/api/v2/';
+    const possibilities = 4;
+  </script>
 </head>
 
 <style>
@@ -12,30 +20,35 @@
     position: absolute;
     opacity: 0;
   }
+  .top {
+    display: flex;
+    align-items: center;
+  }
 </style>
 
 <body>
-  <h1>Pokemon Multiple Choice for Sleep</h1>
-  <section class="main">
-    <div class="top">
-      <div class="bad">0</div>
-      <div class="images"><img id="mainImage" src="https://upload.wikimedia.org/wikipedia/commons/5/55/Question_Mark.svg" alt="?"></div>
-      <div class="good">0</div>
-    </div>
-    <div class="controls">
-      <button id="b1">name goes here</button>
-      <button id="b2">name goes here</button>
-      <button id="b3">name goes here</button>
-      <button id="b4">name goes here</button>
-    </div>
-  </section>
+  <div class="container-fluid">
+    <h1>Pokemon Multiple Choice for Sleep</h1>
+    <section class="main">
+      <div class="top">
+        <div class="bad">0</div>
+        <div class="images"><img id="mainImage" src="https://upload.wikimedia.org/wikipedia/commons/5/55/Question_Mark.svg" alt="?"></div>
+        <div class="good">0</div>
+      </div>
+      <div class="controls">
+        <script>
+          for (let index = 0; index < possibilities; index++) {
+            document.write('<button id="b'+(index+1)+'" class="btn btn-primary">name goes here</button>');
+          }
+        </script>
+      </div>
+    </section>
+  </div>
   <audio controls id="audio" class="hidden">
     <source src="pokemon-lofi-music.mp3" type="audio/mp3">
   </audio>
   
   <script>
-    const api = 'https://pokeapi.co/api/v2/';
-    const possibilities = 4;
 
     function getOnePokemon() {
       endpoint = 'pokemon/';
@@ -62,12 +75,15 @@
         }
         // Choose correct button ID
         var correctId = Math.floor(Math.random() * Math.floor(4)) + 1;
+        // Load the names into the buttons
         for (let index = 1; index < possibilities + 1; index++) {
           if (index == correctId) {
             $('#b' + index)
               .text(correct.name)
+              // Mark the button with the correct answer
               .addClass('correct')
               .removeClass('incorrect');
+            // Set the image for the correct answer
             $('#mainImage').attr('src',correct.sprites.front_default);
           } else {
             let poke = incorrect.pop();
@@ -78,12 +94,6 @@
           }
         }
       });
-      // Set the image for the correct answer
-      // Load the names into the buttons
-      // Mark the button with the correct answer
-      // If bad button is clicked, increase bad counter
-      // If good button is clicked, increase good counter
-      // Call this function again
     }
     // On click event
     function increaseCounter( selector ) {
@@ -91,14 +101,18 @@
       $(selector).text(++current);
     }
     const audio = $('#audio')
+    // If good button is clicked, increase good counter
     $(document).on('click', '.correct', function (e) {
       increaseCounter('.good');
       audio.play()
+      // Call this function again
       newChallenge();
     });
+    // If bad button is clicked, increase bad counter
     $(document).on('click', '.incorrect', function (e) {
       increaseCounter('.bad');
       audio.stop()
+      // Call this function again
       newChallenge();
     });
     newChallenge();
