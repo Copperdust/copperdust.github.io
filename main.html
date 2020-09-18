@@ -13,8 +13,19 @@
     const api = 'https://pokeapi.co/api/v2/';
     const possibilities = 4;
   </script>
-</head>
+  <style>
+    #mainImage {
+      filter: brightness(0);
+    }
+    #mainImage.show {
+      filter: none;
+    }
 
+    .btn-margin {
+      margin:10px
+    }
+  </style>
+</head>
 
 <body class="bg-dark text-white" >
   <div class="container-fluid">
@@ -29,7 +40,7 @@
         <div class="controls">       
           <script>
             for (let index = 1; index < possibilities + 1; index++) {
-              document.write('<div class="row justify-content-md-center"><button id="b'+(index)+'" class="btn btn-primary">name goes here</button></div>');
+              document.write('<div class="row justify-content-md-center"><button id="b'+(index)+'" class="btn btn-light">name goes here</button></div>');
             }
           </script>
         </div>
@@ -90,8 +101,17 @@
     }
     // On image finished loading
     $('#mainImage').on('load', function() {
+      hidePokemon();
       unBlockInputs();
     });
+    // Show Pokemon (remove filter momentarily)
+    function showPokemon() {
+      $('#mainImage').addClass('show');
+    }
+    // Show Pokemon (readd filter)
+    function hidePokemon() {
+      $('#mainImage').removeClass('show');
+    }
     // Block inputs
     function unBlockInputs() {
       for (let index = 1; index < possibilities + 1; index++) {
@@ -118,6 +138,7 @@
     // If good button is clicked, increase good counter
     $(document).on('click', '.correct', async function (e) {
       blockInputs();
+      showPokemon();
       increaseCounter('.good');
       await sleep(500);
       // audio.play()
@@ -127,6 +148,7 @@
     // If bad button is clicked, increase bad counter
     $(document).on('click', '.incorrect', async function (e) {
       blockInputs();
+      showPokemon();
       increaseCounter('.bad');
       await sleep(500);
       // audio.pause()
