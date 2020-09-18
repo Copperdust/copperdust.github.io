@@ -7,6 +7,7 @@
     crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/6160dbcde2.js" crossorigin="anonymous"></script>
 
   <script>
     // Define constants
@@ -22,25 +23,55 @@
     }
 
     .btn-margin {
-      margin:10px
+      margin:5px;
+      width: 30%;
+    }
+
+    .bg-img {
+      background-image: url("https://www.serebii.net/pokearth/maps/kanto-frlg/82.png");
+    }
+
+    .correct-pop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: rgba(0, 255, 0, 0.2);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .correct-pop .fas {
+      font-size: 120px;
+      color: green;
+      position: absolute;
+      transform: translate(-50%,-50%);
+      top: 50%;
+      left: 50%;
     }
   </style>
 </head>
 
 <body class="bg-dark text-white" >
+  <i class="fas fa-check-circle" style="opacity: 0;position: absolute;"></i>
+  <div class="correct-pop" style="display: none;">
+    <i class="fas fa-check-circle"></i>
+    <div class="overlay"></div>
+  </div>
   <div class="container-fluid">
-    <div class='offset-4 col-md-4'>
-      <h1>Poke Lullaby</h1>
+    <div class='offset-2 col-8'>
+      <h1 class="text-center">Poke Lullaby</h1>
       <section class="main">
-        <div class="top d-flex align-items-center">
-          <div class="bad">0</div>
+        <div class="top d-flex align-items-center justify-content-around bg-img">
+          <div class="bad bg-dark p-1">0</div>
           <div class="images"><img id="mainImage" src="https://upload.wikimedia.org/wikipedia/commons/5/55/Question_Mark.svg" alt="?"></div>
-          <div class="good">0</div>
+          <div class="good bg-dark p-1">0</div>
         </div>
         <div class="controls">       
           <script>
             for (let index = 1; index < possibilities + 1; index++) {
-              document.write('<div class="row justify-content-md-center"><button id="b'+(index)+'" class="btn btn-light">name goes here</button></div>');
+              document.write('<div class="row justify-content-md-center"><button id="b'+(index)+'" class="btn btn-light btn-margin">name goes here</button></div>');
             }
           </script>
         </div>
@@ -55,7 +86,7 @@
     // Get one pokemon
     function getOnePokemon() {
       endpoint = 'pokemon/';
-      random = Math.floor(Math.random() * Math.floor(100)) + 1;
+      random = Math.floor(Math.random() * Math.floor(150)) + 1;
       return $.ajax({
         url: api + endpoint + random,
       });
@@ -104,6 +135,16 @@
       hidePokemon();
       unBlockInputs();
     });
+    // Show success animation
+    function success() {
+      $('.correct-pop').fadeIn(10, function() {
+        $(this).fadeOut(490);
+      })
+    }
+    // Show failure animation
+    function failure() {
+
+    }
     // Show Pokemon (remove filter momentarily)
     function showPokemon() {
       $('#mainImage').addClass('show');
@@ -137,21 +178,23 @@
     // const audio = $('#audio')
     // If good button is clicked, increase good counter
     $(document).on('click', '.correct', async function (e) {
+      success();
       blockInputs();
       showPokemon();
       increaseCounter('.good');
       await sleep(500);
-      // audio.play()
+      audio.play()
       // Call this function again
       newChallenge();
     });
     // If bad button is clicked, increase bad counter
     $(document).on('click', '.incorrect', async function (e) {
+      failure();
       blockInputs();
       showPokemon();
       increaseCounter('.bad');
       await sleep(500);
-      // audio.pause()
+      audio.pause()
       // Call this function again
       newChallenge();
     });
