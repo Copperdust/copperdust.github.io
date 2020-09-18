@@ -15,22 +15,13 @@
   </script>
 </head>
 
-<style>
-  .hidden {
-    display: none;
-  }
-  .top {
-    display: flex;
-    align-items: center;
-  }
-</style>
 
-<body>
+<body class="bg-dark text-white" >
   <div class="container-fluid">
     <div class='offset-4 col-md-4'>
-      <h1>Pokemon Multiple Choice for Sleep</h1>
+      <h1>Poke Lullaby</h1>
       <section class="main">
-        <div class="top">
+        <div class="top d-flex align-items-center">
           <div class="bad">0</div>
           <div class="images"><img id="mainImage" src="https://upload.wikimedia.org/wikipedia/commons/5/55/Question_Mark.svg" alt="?"></div>
           <div class="good">0</div>
@@ -38,14 +29,14 @@
         <div class="controls">       
           <script>
             for (let index = 1; index < possibilities + 1; index++) {
-              document.write('<button id="b' + index + '" class="btn btn-primary">name goes here</button>');
+              document.write('<div class="row justify-content-md-center"><button id="b'+(index)+'" class="btn btn-primary">name goes here</button></div>');
             }
           </script>
         </div>
       </section>
     </div>
   </div>
-  <audio controls id="audio" class="hidden">
+  <audio controls id="audio" class="d-none">
     <source src="./pokemon-lofi-music.mp3" type="audio/mp3">
   </audio>
   
@@ -76,11 +67,11 @@
           }
         }
         // Choose correct button ID
-        var correctId = Math.floor(Math.random() * Math.floor(4)) + 1;
+        var correctId = Math.floor(Math.random() * Math.floor(4));
         // Load the names into the buttons
-        for (let index = 1; index < possibilities + 1; index++) {
+        for (let index = 0; index < possibilities; index++) {
           if (index == correctId) {
-            $('#b' + index)
+            $('#b' + (index+1))
               .text(correct.name)
               // Mark the button with the correct answer
               .addClass('correct')
@@ -89,7 +80,7 @@
             $('#mainImage').attr('src',correct.sprites.front_default);
           } else {
             let poke = incorrect.pop();
-            $('#b' + index)
+            $('#b' + (index+1))
               .text(poke.name)
               .removeClass('correct')
               .addClass('incorrect');
@@ -118,20 +109,26 @@
       var current = parseInt($(selector).text());
       $(selector).text(++current);
     }
+    // Sleep
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
     // On click event
     // const audio = $('#audio')
     // If good button is clicked, increase good counter
-    $(document).on('click', '.correct', function (e) {
+    $(document).on('click', '.correct', async function (e) {
       blockInputs();
       increaseCounter('.good');
+      await sleep(500);
       // audio.play()
       // Call this function again
       newChallenge();
     });
     // If bad button is clicked, increase bad counter
-    $(document).on('click', '.incorrect', function (e) {
+    $(document).on('click', '.incorrect', async function (e) {
       blockInputs();
       increaseCounter('.bad');
+      await sleep(500);
       // audio.pause()
       // Call this function again
       newChallenge();
